@@ -1,0 +1,7 @@
+.filtered-boxes {
+  display: flex;
+}
+
+.chart-wrapper .chart-stage {
+  height: 100px;
+}

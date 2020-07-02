@@ -1,0 +1,82 @@
+---
+title: "Example of filtered values boxes"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: rows
+    vertical_layout: fill
+    css: style.css
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(htmltools)
+library(summarywidget)
+library(dplyr)
+library(crosstalk)
+```
+
+Row {data-width=650}
+-----------------------------------------------------------------------
+
+### Value Box A
+
+```{r}
+valueBox(count(mtcars),
+         color = "red")
+```
+
+### Value Box B
+
+```{r}
+valueBox(summarise(mtcars, mean = round(mean(mpg), 1)), color = "blue")
+```
+
+Row {data-width=350}
+-----------------------------------------------------------------------
+
+### Filtered Values Boxes
+
+```{r}
+mtcars_shared <-
+  SharedData$new(
+    mtcars
+  )
+```
+
+<div class="filtered-boxes">
+
+```{r}
+div(class = "section level3 value-box", style = "background-color: orange; display: inline-block;",
+    div(class = "inner",
+        p(
+          class = "value",
+          summarywidget(
+            mtcars_shared,
+            statistic = 'count',
+            column = 'mpg',
+            digits = 0
+          ),
+          span(class = "caption", "Number of cars")
+        )))
+div(class = "section level3 value-box", style = "background-color: green; display: inline-block;",
+    div(class = "inner",
+        p(
+          class = "value",
+          summarywidget(
+            mtcars_shared,
+            statistic = 'mean',
+            column = 'mpg',
+            digits = 1
+          ),
+          span(class = "caption", "Mean MPG")
+        )))
+```
+
+</div>
+
+```{r fig.height = 5}
+bscols(widths = c(4, 4),
+       filter_select("cyl", "Cylinders", mtcars_shared, ~cyl),
+       filter_slider("disp", "Disp", mtcars_shared, ~disp)
+)
+```
